@@ -1,0 +1,265 @@
+import { NextResponse } from "next/server";
+import IPGeolocationAPI from "ip-geolocation-api-javascript-sdk";
+import GeolocationParams from "ip-geolocation-api-javascript-sdk/GeolocationParams.js";
+import {
+  splitAndCapitalizeName,
+  capitalizeFullName,
+} from "../../utils/nameCapitalization.js";
+
+const isDev = process.env.NODE_ENV !== "production";
+const ipgeolocationApi = new IPGeolocationAPI(
+  process.env.IP_GEOLOCATION_API_KEY,
+  false
+);
+const GHL_V1_BASE = "https://rest.gohighlevel.com/v1";
+
+// ---------- helpers ----------
+const mask = (str = "", left = 6, right = 4) => {
+  if (!str) return "MISSING";
+  if (str.length <= left + right) return `${str[0]}***${str[str.length - 1]}`;
+  return `${str.slice(0, left)}...${str.slice(-right)}`;
+};
+
+const buildV1Headers = () => {
+  const token = (
+    process.env.GOHIGHLEVEL_API_KEY ||
+    process.env.GHL_API_KEY ||
+    ""
+  ).trim();
+  if (!token) return null; // allow graceful local fallback
+  if (!token.includes(".")) {
+    throw new Error(
+      "GOHIGHLEVEL_API_KEY must be the v1 Location API key (eyJ…)."
+    );
+  }
+  if (isDev) console.log("[GHL v1] Using key:", mask(token));
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+};
+
+const extractContactIdV1 = (obj) => {
+  if (!obj) return undefined;
+  if (obj.contact?.id) return obj.contact.id;
+  if (obj.id) return obj.id;
+  return undefined;
+};
+
+function getGeolocationAsync(params) {
+  return new Promise((resolve, reject) => {
+    ipgeolocationApi.getGeolocation((json) => {
+      if (json.message) reject(new Error(json.message));
+      else resolve(json);
+    }, params);
+  });
+}
+
+const ANSWER_LABELS = {
+  diagnosed_bipolar: "Diagnosed with bipolar I or II",
+  current_depressive_episode: "Currently going through a depressive episode",
+  can_travel: "Can travel to study location for visits",
+};
+
+const CONDITION_NAMES = {
+  crohns_disease: "Current diagnosis of Crohn's disease",
+  isolated_proctitis: "Isolated proctitis (UC limited to rectum only)",
+  ileostomy_colostomy: "Permanent ileostomy or colostomy",
+  bowel_surgery_recent: "Major bowel surgery within past 6 months",
+  cancer_history: "Cancer history in past 5 years or current treatment",
+  serious_infection: "Serious/opportunistic infection within past 6 months",
+  hepatitis_infection: "Active hepatitis B or hepatitis C infection",
+  tuberculosis_history: "History of tuberculosis or current TB treatment",
+  immunodeficiency: "Known immunodeficiency disorder",
+  biologics_monoclonal_antibodies:
+    "Current treatment with biologics/monoclonal antibodies for UC",
+};
+
+// ---------- handler ----------
+export async function POST(request) {
+  try {
+    const body = await request.json();
+    const { eventId, fbp, fbc, ...formData } = body;
+
+    // --- Geo-IP (best effort) ---
+    const headersList = request.headers;
+    const forwardedFor = headersList.get("x-forwarded-for");
+    const ip =
+      headersList.get("x-nf-client-connection-ip") ||
+      (forwardedFor ? forwardedFor.split(",")[0].trim() : null) ||
+      "8.8.8.8";
+    const userAgent = headersList.get("user-agent");
+    const referer = headersList.get("referer");
+
+    let locationData = { city: "", state: "", postalCode: "", country: "US" };
+    try {
+      const geolocationParams = new GeolocationParams();
+      geolocationParams.setIPAddress(ip);
+      geolocationParams.setFields("geo,zipcode");
+      const geo = await getGeolocationAsync(geolocationParams);
+      locationData = {
+        city: geo.city || "",
+        state: geo.state_prov || "",
+        postalCode: geo.zipcode || "",
+        country: geo.country_code2 || "US",
+      };
+    } catch (e) {
+      console.warn("IP Geolocation failed:", e.message);
+    }
+
+    const v1Headers = buildV1Headers();
+
+    // --- Only accept qualified leads from pre-screening form ---
+    const isPreScreening = formData.source === "pre-screening-form";
+
+    // Validate that this is a qualified lead
+    if (formData.qualificationStatus !== 'qualified') {
+      return NextResponse.json(
+        { success: false, message: 'Only qualified leads can be submitted' },
+        { status: 400 }
+      );
+    }
+
+    // --- Build the qualification note ---
+    const qualificationNote = `=== QUALIFICATION STATUS ===
+Status: QUALIFIED
+✓ Bipolar I or II diagnosis
+✓ Current depressive episode
+✓ Can travel to Stone Mountain study location
+✓ Age between 18–74 years old`;
+
+    const answerLines = [];
+    if (formData.answers && typeof formData.answers === "object") {
+      Object.entries(formData.answers).forEach(([key, val]) => {
+        const label =
+          ANSWER_LABELS[key] ||
+          key.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+        const rendered = Array.isArray(val) ? val.join("; ") : val ?? "";
+        answerLines.push(`- ${label}: ${rendered || "Not answered"}`);
+      });
+    }
+
+    // Build minimal Full Assessment note (no title line, no extras)
+    const locationLine =
+      [
+        locationData.city,
+        locationData.state,
+        locationData.postalCode,
+        locationData.country,
+      ]
+        .filter(Boolean)
+        .join(", ") || "N/A";
+
+    // Get properly capitalized name for display
+    const displayName = formData.name
+      ? capitalizeFullName(formData.name)
+      : "N/A";
+
+    const fullAssessmentNote = `=== BIPOLAR STUDY FULL ASSESSMENT ===
+=== PATIENT INFO ===
+Name: ${displayName}
+Age: ${formData.age || "Not provided"}
+Location: ${locationLine}
+
+=== ALL QUESTION RESPONSES ===
+${answerLines.join("\n") || "- None"}
+`;
+
+    // --- Build contact tags - all leads are qualified ---
+    const tags = ["website-lead", "XENON BPD", "qualified"];
+
+    // Apply proper name capitalization
+    const { firstName, lastName } = splitAndCapitalizeName(formData.name || "");
+
+    const contactData = {
+      firstName,
+      lastName,
+      email: formData.email,
+      phone: formData.phone,
+      city: locationData.city,
+      state: locationData.state,
+      postalCode: locationData.postalCode,
+      country: locationData.country,
+      source: isPreScreening
+        ? "Pre-Screening Form - Website"
+        : "Website Eligibility Form",
+      tags, // ONLY these tags
+      companyName: "Bipolar - Website Lead",
+    };
+
+    if (isDev) {
+      console.log("[GHL v1] Creating contact:", {
+        endpoint: `${GHL_V1_BASE}/contacts/`,
+        apiKeyPreview: mask(
+          process.env.GOHIGHLEVEL_API_KEY || process.env.GHL_API_KEY
+        ),
+        contactData,
+      });
+    }
+    if (v1Headers) {
+      // --- Create contact (v1) ---
+      const createRes = await fetch(`${GHL_V1_BASE}/contacts/`, {
+        method: "POST",
+        headers: v1Headers,
+        body: JSON.stringify(contactData),
+      });
+      const createText = await createRes.text();
+      if (!createRes.ok)
+        throw new Error(
+          `GHL v1 create contact failed ${createRes.status}: ${createText}`
+        );
+      let createJson = {};
+      try {
+        createJson = JSON.parse(createText);
+      } catch {
+        /* ignore */
+      }
+      const contactId = extractContactIdV1(createJson);
+      if (!contactId)
+        throw new Error("GHL v1 returned success but contact id was not found.");
+
+      // --- Add the two notes (v1) ---
+      const note1 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
+        method: "POST",
+        headers: v1Headers,
+        body: JSON.stringify({ body: qualificationNote }),
+      });
+      if (!note1.ok)
+        console.warn("[GHL v1] Qualification note failed:", await note1.text());
+
+      const note2 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
+        method: "POST",
+        headers: v1Headers,
+        body: JSON.stringify({ body: fullAssessmentNote }),
+      });
+      if (!note2.ok)
+        console.warn("[GHL v1] Full assessment note failed:", await note2.text());
+
+      return NextResponse.json({
+        success: true,
+        message: "Qualified lead created successfully",
+        contactId,
+        tagsApplied: tags,
+        locationData: locationData,
+      });
+    }
+
+    // Fallback (no GHL key): accept lead locally for dev/preview
+    if (isDev) {
+      console.warn("[submit-lead] GOHIGHLEVEL_API_KEY not set. Accepting lead without CRM.");
+    }
+    return NextResponse.json({
+      success: true,
+      message: "Lead received (no CRM integration configured)",
+      tagsApplied: tags,
+      locationData,
+    });
+  } catch (error) {
+    console.error("submit-lead error:", error);
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
+  }
+}
