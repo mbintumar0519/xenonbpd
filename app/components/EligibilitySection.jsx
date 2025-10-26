@@ -7,7 +7,7 @@ export default function EligibilitySection() {
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Could This Study Help You?</h2>
         <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">We’re Looking for People Who:</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Who Qualifies?</h3>
             <ul className="list-disc pl-5 space-y-2 text-gray-800">
               <li>Have bipolar I or bipolar II disorder</li>
               <li>Are currently in a depressive episode (lasting at least 4 weeks)</li>

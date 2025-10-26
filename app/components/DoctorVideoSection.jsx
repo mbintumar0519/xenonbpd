@@ -21,10 +21,10 @@ const DoctorVideoSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             <div className="flex flex-col items-center gap-2 md:flex-row md:justify-center md:gap-3">
-              <span>About the</span>
-              <span className="text-white flex items-center gap-3">
+              <span className="text-teal-500">About the</span>
+              <span className="text-teal-500 flex items-center gap-3">
                 Bipolar Depression Study
-                <FaUserMd className="w-8 h-8 md:w-10 md:h-10 text-[#1E3A8A] drop-shadow-sm" />
+                <FaUserMd className="w-8 h-8 md:w-10 md:h-10 text-teal-400 drop-shadow-sm" />
               </span>
             </div>
           </h2>

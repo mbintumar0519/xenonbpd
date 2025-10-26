@@ -83,6 +83,22 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preload" as="image" href="/hero.png" fetchPriority="high" />
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(
+              function(w,d,s,l,i){
+                w[l]=w[l]||[];
+                w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;
+                j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+              }
+            )(window,document,'script','dataLayer','GTM-MXW78KVC');`
+          }}
+        />
         <link rel="icon" href="/icon.png?v=2" type="image/png" />
         <link rel="shortcut icon" href="/icon.png?v=2" type="image/png" />
         <link rel="apple-touch-icon" href="/icon.png?v=2" />
@@ -155,6 +171,15 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="antialiased bg-white-soft text-text-main font-body scroll-smooth" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-MXW78KVC"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <a href="#main" className="skip-link">Skip to main content</a>
         <BrowserExtensionCleanup />
         <ClarityTracking />

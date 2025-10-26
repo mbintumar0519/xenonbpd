@@ -540,6 +540,28 @@ export default function PreScreeningForm() {
                   By submitting, you agree to be contacted about this or related studies. We never sell your information.
                 </p>
               </div>
+
+              {/* Consent Checkboxes */}
+              <div className="space-y-3 pt-2">
+                <label className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    required
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span>
+                    I consent to Denali Health Atlanta, LLC contacting me via phone, email, or text message regarding this diabetic wound care program and related services. These messages may include appointment reminders, and notifications for new studies among others. Message frequency may vary. Message &amp; Data rates may apply. Reply STOP to opt-out. I understand I can opt out at any time. Please review our Privacy Policy.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    required
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span>I agree to the Terms and Conditions.</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
