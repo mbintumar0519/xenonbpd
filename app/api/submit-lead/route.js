@@ -83,13 +83,7 @@ export async function POST(request) {
     const body = await request.json();
     const { eventId, fbp, fbc, ...formData } = body;
 
-    // In development, accept immediately to avoid any external dependency failures
-    if (isDev) {
-      return NextResponse.json({
-        success: true,
-        message: "Lead received (development mode)",
-      });
-    }
+    // Live CRM test requested: remove dev short-circuit so requests hit GHL
 
     // --- Geo-IP (best effort) ---
     const headersList = request.headers;
