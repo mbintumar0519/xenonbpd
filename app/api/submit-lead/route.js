@@ -214,51 +214,65 @@ ${answerLines.join("\n") || "- None"}
       });
     }
     if (v1Headers) {
-      // --- Create contact (v1) ---
-      const createRes = await fetch(`${GHL_V1_BASE}/contacts/`, {
-        method: "POST",
-        headers: v1Headers,
-        body: JSON.stringify(contactData),
-      });
-      const createText = await createRes.text();
-      if (!createRes.ok)
-        throw new Error(
-          `GHL v1 create contact failed ${createRes.status}: ${createText}`
-        );
-      let createJson = {};
       try {
-        createJson = JSON.parse(createText);
-      } catch {
-        /* ignore */
+        // --- Create contact (v1) ---
+        const createRes = await fetch(`${GHL_V1_BASE}/contacts/`, {
+          method: "POST",
+          headers: v1Headers,
+          body: JSON.stringify(contactData),
+        });
+        const createText = await createRes.text();
+        if (!createRes.ok)
+          throw new Error(
+            `GHL v1 create contact failed ${createRes.status}: ${createText}`
+          );
+        let createJson = {};
+        try {
+          createJson = JSON.parse(createText);
+        } catch {
+          /* ignore */
+        }
+        const contactId = extractContactIdV1(createJson);
+        if (!contactId)
+          throw new Error("GHL v1 returned success but contact id was not found.");
+
+        // --- Add the two notes (v1) ---
+        const note1 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
+          method: "POST",
+          headers: v1Headers,
+          body: JSON.stringify({ body: qualificationNote }),
+        });
+        if (!note1.ok)
+          console.warn("[GHL v1] Qualification note failed:", await note1.text());
+
+        const note2 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
+          method: "POST",
+          headers: v1Headers,
+          body: JSON.stringify({ body: fullAssessmentNote }),
+        });
+        if (!note2.ok)
+          console.warn("[GHL v1] Full assessment note failed:", await note2.text());
+
+        return NextResponse.json({
+          success: true,
+          message: "Qualified lead created successfully",
+          contactId,
+          tagsApplied: tags,
+          locationData: locationData,
+        });
+      } catch (e) {
+        console.warn("[GHL v1] CRM integration failed:", e.message);
+        if (isDev) {
+          // In development, accept the lead even if CRM fails
+          return NextResponse.json({
+            success: true,
+            message: "Lead received (development mode; CRM integration failed)",
+            tagsApplied: tags,
+            locationData,
+          });
+        }
+        throw e;
       }
-      const contactId = extractContactIdV1(createJson);
-      if (!contactId)
-        throw new Error("GHL v1 returned success but contact id was not found.");
-
-      // --- Add the two notes (v1) ---
-      const note1 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
-        method: "POST",
-        headers: v1Headers,
-        body: JSON.stringify({ body: qualificationNote }),
-      });
-      if (!note1.ok)
-        console.warn("[GHL v1] Qualification note failed:", await note1.text());
-
-      const note2 = await fetch(`${GHL_V1_BASE}/contacts/${contactId}/notes/`, {
-        method: "POST",
-        headers: v1Headers,
-        body: JSON.stringify({ body: fullAssessmentNote }),
-      });
-      if (!note2.ok)
-        console.warn("[GHL v1] Full assessment note failed:", await note2.text());
-
-      return NextResponse.json({
-        success: true,
-        message: "Qualified lead created successfully",
-        contactId,
-        tagsApplied: tags,
-        locationData: locationData,
-      });
     }
 
     // No GHL key configured
