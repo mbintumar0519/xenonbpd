@@ -18,8 +18,6 @@ export default function ClarityTracking() {
       `;
       document.head.appendChild(script);
       console.log('Microsoft Clarity initialized with project ID:', projectId);
-    } else {
-      console.warn('NEXT_PUBLIC_CLARITY_PROJECT_ID not found in environment variables');
     }
   }, []);
 

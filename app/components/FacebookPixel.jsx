@@ -97,23 +97,22 @@ export default function FacebookPixel() {
     const fbp = getFbp();
     const fbc = getFbc();
     
-    fetch('/api/meta/convert', {
+    fetch('/api/facebook/conversion', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        event_name: 'PageView',
+        eventName: 'PageView',
         event_id: eventId,
-        value: 0, // PageView has no monetary value
-        event_data: {
+        eventData: {
+          value: 0,
           content_name: 'Page View',
           content_category: 'navigation'
         },
         fbp: fbp,
         fbc: fbc,
-        user_agent: navigator.userAgent,
-        referrer: document.referrer,
+        userAgent: navigator.userAgent,
         url: window.location.href
       })
     }).catch(error => {

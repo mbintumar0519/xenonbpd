@@ -27,7 +27,8 @@ const buildV1Headers = () => {
     ""
   ).trim();
   if (!token) return null; // allow graceful local fallback
-  if (!token.includes(".")) {
+  // In dev, tolerate non-JWT keys to avoid hard failures; prod should use proper v1 key
+  if (process.env.NODE_ENV === 'production' && !token.includes('.')) {
     throw new Error(
       "GOHIGHLEVEL_API_KEY must be the v1 Location API key (eyJ…)."
     );
