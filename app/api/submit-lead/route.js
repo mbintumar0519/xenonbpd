@@ -83,6 +83,14 @@ export async function POST(request) {
     const body = await request.json();
     const { eventId, fbp, fbc, ...formData } = body;
 
+    // In development, accept immediately to avoid any external dependency failures
+    if (isDev) {
+      return NextResponse.json({
+        success: true,
+        message: "Lead received (development mode)",
+      });
+    }
+
     // --- Geo-IP (best effort) ---
     const headersList = request.headers;
     const forwardedFor = headersList.get("x-forwarded-for");
