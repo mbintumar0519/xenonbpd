@@ -32,7 +32,7 @@ npm run ghl:check-leads # Check local leads storage
 - **UI**: React 19.0.0 with Tailwind CSS
 - **Animations**: Framer Motion
 - **Analytics**: Facebook Pixel + Conversions API
-- **CRM**: GoHighLevel integration
+- **CRM**: GoHighLevel integration + Google Sheets backup
 
 ### Project Structure
 ```
@@ -59,7 +59,13 @@ app/
    - Calendar integration with instant booking option
    - Workflow triggers for lead nurturing
 
-3. **Lead Capture Flow**
+3. **Google Sheets Integration**
+   - Parallel lead backup to Google Sheets via webhook
+   - Non-blocking implementation (doesn't affect main flow)
+   - Automatic date stamping and status tracking
+   - Configurable sheet name support
+
+4. **Lead Capture Flow**
    - Multi-step eligibility screening form
    - Client-side validation with server-side submission
    - Duplicate lead handling
@@ -83,6 +89,9 @@ NEXT_PUBLIC_GOHIGHLEVEL_CALENDAR_EMBED_URL=
 # API Configuration
 NEXT_PUBLIC_API_URL=
 IPINFO_TOKEN=
+
+# Google Sheets Integration
+GOOGLE_SHEETS_WEBHOOK_URL=
 ```
 
 ### Development Patterns
@@ -132,6 +141,15 @@ IPINFO_TOKEN=
 2. Test changes with `npm run ghl:test`
 3. Verify booking links with actual calendar ID
 
+**Managing Google Sheets Integration:**
+1. Webhook URL configured in `GOOGLE_SHEETS_WEBHOOK_URL` environment variable
+2. Lead data automatically sent to Google Sheets on form submission
+3. Integration runs in parallel (non-blocking) - won't fail main submission
+4. Data format: Name, Number, Email, Date Initiated, Status
+5. Sheet name defaults to 'BPD Leads' (configurable in `/api/submit-lead/route.js:217`)
+6. Check Google Apps Script logs for webhook errors
+7. Test webhook directly with the `testWebhook()` function in Apps Script editor
+
 ### Important Notes
 
 - Always test Facebook Pixel events in development before production
@@ -139,6 +157,8 @@ IPINFO_TOKEN=
 - Lead submission includes automatic duplicate checking
 - One-time booking links expire after single use
 - All sensitive operations happen server-side for security
+- Google Sheets integration is non-blocking and won't affect lead submission success
+- Leads are sent to both GoHighLevel CRM and Google Sheets simultaneously
 
 ## IRB Compliance Guidelines
 

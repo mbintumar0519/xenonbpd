@@ -5,6 +5,7 @@ import {
   splitAndCapitalizeName,
   capitalizeFullName,
 } from "../../utils/nameCapitalization.js";
+import { sendToGoogleSheets } from "../../utils/googleSheets.js";
 
 const isDev = process.env.NODE_ENV !== "production";
 const ipgeolocationApi = new IPGeolocationAPI(
@@ -205,6 +206,17 @@ ${answerLines.join("\n") || "- None"}
       tags, // ONLY these tags
       companyName: "Bipolar - Website Lead",
     };
+
+    // --- Send to Google Sheets (non-blocking) ---
+    // Fire and forget - don't let Google Sheets failures block the main flow
+    sendToGoogleSheets({
+      name: displayName,
+      phone: rawPhone,
+      email: email,
+      status: 'Qualified - XENON BPD Study'
+    }, 'BPD Leads').catch(err => {
+      console.warn('[Google Sheets] Failed to send lead:', err.message);
+    });
 
     if (isDev) {
       console.log("[GHL v1] Creating contact:", {
