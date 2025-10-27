@@ -12,7 +12,7 @@ export default function EligibilitySection() {
               <li>Have bipolar I or bipolar II disorder</li>
               <li>Are currently in a depressive episode (lasting at least 4 weeks)</li>
               <li>Feel like nothing brings pleasure anymore (anhedonia)</li>
-              <li>Are between 18–74 years old</li>
+              
               <li>Want to try something different</li>
             </ul>
           </div>

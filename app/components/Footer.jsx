@@ -35,7 +35,7 @@ export default function Footer() {
                   href="/#pi" 
                   className="text-white hover:text-primary-light transition-colors duration-200 text-sm md:text-base font-body footer-link"
                 >
-                  Meet the PI
+                  Meet the Doc!
                 </Link>
               </li>
               <li>

@@ -58,7 +58,7 @@ const DoctorVideoSection = () => {
           <div className="order-2 lg:order-2 text-center">
             <div className="bg-white rounded-xl p-8 shadow-lg">
               <p className="text-xl text-gray-700 leading-relaxed mb-8">
-                <strong>We would love to welcome you</strong> in and explore what options might be a good fit.
+                <strong>Schedule your appointment with Dr. Johnson</strong> 
               </p>
 
               {/* CTA Button */}

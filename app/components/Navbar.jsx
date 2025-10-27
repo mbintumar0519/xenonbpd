@@ -121,7 +121,7 @@ export default function Navbar() {
                 }}
                 className="nav-link"
               >
-                Meet the PI
+                Meet the Doc!
               </Link>
               <Link 
                 href="/#enroll" 
@@ -306,7 +306,7 @@ export default function Navbar() {
                     }}
                   className="mobile-nav-link"
                 >
-                  Meet the PI
+                  Meet the Doc!
                 </Link>
                 <Link 
                   href="/#enroll" 

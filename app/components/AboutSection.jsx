@@ -39,7 +39,7 @@ export default function AboutSection() {
             marginBottom: 'var(--space-4)',
             fontFamily: 'var(--font-heading)'
           }}>
-            You’re Not Alone in This
+            Put What Makes This Different
           </h2>
           <div className="underline" style={{
             width: '80px',
@@ -173,7 +173,7 @@ export default function AboutSection() {
               color: 'var(--gray-500)',
               lineHeight: '1.6'
             }}>
-              Adults <strong>18–74</strong> with <strong>bipolar I or II</strong> currently in a depressive episode lasting at least 4 weeks, especially if joy feels distant and motivation is hard. If you’re ready to try something different, we’d love to talk.
+              People with <strong>bipolar I or II</strong> currently in a depressive episode lasting at least 4 weeks, especially if joy feels distant and motivation is hard. If you’re ready to try something different, we’d love to talk.
             </p>
           </div>
         </div>

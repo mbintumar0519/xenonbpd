@@ -127,7 +127,7 @@ Status: QUALIFIED
 ✓ Bipolar I or II diagnosis
 ✓ Current depressive episode
 ✓ Can travel to Stone Mountain study location
-✓ Age between 18–74 years old`;
+`;
 
     const answerLines = [];
     if (formData.answers && typeof formData.answers === "object") {
@@ -172,11 +172,26 @@ ${answerLines.join("\n") || "- None"}
     // Apply proper name capitalization
     const { firstName, lastName } = splitAndCapitalizeName(formData.name || "");
 
+    // Normalize contact fields
+    const rawPhone = String(formData.phone || '').trim();
+    let phone = rawPhone;
+    if (rawPhone) {
+      if (rawPhone.startsWith('+')) {
+        phone = rawPhone;
+      } else {
+        const digits = rawPhone.replace(/\D/g, '');
+        if (digits.length === 10) phone = `+1${digits}`; // assume US
+        else if (digits.length === 11 && digits.startsWith('1')) phone = `+${digits}`;
+        else phone = `+${digits}`;
+      }
+    }
+    const email = (formData.email || '').trim().toLowerCase();
+
     const contactData = {
       firstName,
       lastName,
-      email: formData.email,
-      phone: formData.phone,
+      email,
+      phone,
       city: locationData.city,
       state: locationData.state,
       postalCode: locationData.postalCode,
@@ -245,16 +260,17 @@ ${answerLines.join("\n") || "- None"}
       });
     }
 
-    // Fallback (no GHL key): accept lead locally for dev/preview
+    // No GHL key configured
     if (isDev) {
-      console.warn("[submit-lead] GOHIGHLEVEL_API_KEY not set. Accepting lead without CRM.");
+      console.warn("[submit-lead] GOHIGHLEVEL_API_KEY not set. Accepting lead without CRM (development mode).");
+      return NextResponse.json({
+        success: true,
+        message: "Lead received (development mode; no CRM integration configured)",
+        tagsApplied: tags,
+        locationData,
+      });
     }
-    return NextResponse.json({
-      success: true,
-      message: "Lead received (no CRM integration configured)",
-      tagsApplied: tags,
-      locationData,
-    });
+    return NextResponse.json({ success: false, message: 'Server configuration error: GOHIGHLEVEL_API_KEY missing' }, { status: 500 });
   } catch (error) {
     console.error("submit-lead error:", error);
     return NextResponse.json(

@@ -51,7 +51,6 @@ export default function PreScreeningForm() {
   const [answers, setAnswers] = useState({});
   const [contactInfo, setContactInfo] = useState({
     name: '',
-    age: '',
     phone: '',
     email: ''
   });
@@ -90,24 +89,17 @@ export default function PreScreeningForm() {
       errors.email = 'Please enter a valid email address';
     }
 
-    // Age validation
-    const age = parseInt(contactInfo.age);
-    if (!contactInfo.age?.trim()) {
-      errors.age = 'Age is required';
-    } else if (isNaN(age) || age < 18 || age > 120) {
-      errors.age = 'Please enter a valid age between 18 and 120';
-    }
+    // Age removed
 
     return errors;
   };
 
   // Check if user qualifies based on current answers
   const checkQualification = () => {
-    const age = parseInt(contactInfo.age);
     const hasBipolarDiagnosis = answers.diagnosed_bipolar === 'Yes';
     const hasCurrentEpisode = answers.current_depressive_episode === 'Yes';
     const canTravelToStoneMountain = answers.can_travel === 'Yes';
-    const ageQualified = !isNaN(age) && age >= 18 && age <= 74;
+    const ageQualified = true;
 
     // Check if any question has a disqualifying "No" answer
     const hasDisqualifyingAnswer = answers.diagnosed_bipolar === 'No' ||
@@ -115,26 +107,25 @@ export default function PreScreeningForm() {
                                    answers.can_travel === 'No';
 
     // Check if age is entered and out of range
-    const hasDisqualifyingAge = contactInfo.age && !isNaN(age) && (age < 18 || age > 74);
+    const hasDisqualifyingAge = false;
 
     // User is disqualified if they have any disqualifying answer OR disqualifying age
-    const isDisqualified = hasDisqualifyingAnswer || hasDisqualifyingAge;
+    const isDisqualified = hasDisqualifyingAnswer;
 
     // User qualifies if: all answers are "Yes" AND age is in range
-    const qualified = hasBipolarDiagnosis && hasCurrentEpisode && canTravelToStoneMountain && ageQualified;
+    const qualified = hasBipolarDiagnosis && hasCurrentEpisode && canTravelToStoneMountain;
     return {
       qualified,
       isDisqualified,
       hasBipolarDiagnosis,
       hasCurrentEpisode,
       canTravelToStoneMountain,
-      ageQualified,
-      age
+      ageQualified
     };
   };
 
   const qualificationStatus = checkQualification();
-  const isAgeOutOfRange = contactInfo.age && (parseInt(contactInfo.age) < 18 || parseInt(contactInfo.age) > 74);
+  const isAgeOutOfRange = false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,11 +145,10 @@ export default function PreScreeningForm() {
     const lastName = lastNameParts.join(' ');
 
     // Check all qualification criteria
-    const age = parseInt(contactInfo.age);
     const hasBipolarDiagnosis = answers.diagnosed_bipolar === 'Yes';
     const hasCurrentEpisode = answers.current_depressive_episode === 'Yes';
     const canTravelToStoneMountain = answers.can_travel === 'Yes';
-    const ageQualified = age >= 18 && age <= 74;
+    const ageQualified = true;
 
     // Overall qualification requires ALL criteria to be met
     const finalQualificationStatus = hasBipolarDiagnosis && hasCurrentEpisode && canTravelToStoneMountain && ageQualified;
@@ -178,7 +168,6 @@ export default function PreScreeningForm() {
         },
         body: JSON.stringify({
           name: formattedName,
-          age: contactInfo.age,
           phone: contactInfo.phone,
           email: contactInfo.email,
           source: 'pre-screening-form',
@@ -414,10 +403,9 @@ export default function PreScreeningForm() {
                 )}
               </div>
 
-              {/* Phone + Age Row */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Phone */}
-                <div className="flex-1 sm:flex-[2]">
+              {/* Phone */}
+              <div>
+                <div className="flex-1">
                   <label htmlFor="phone" className="block text-gray-900 font-semibold mb-2" style={{ fontSize: '14px' }}>
                     Phone
                   </label>
@@ -448,49 +436,6 @@ export default function PreScreeningForm() {
                   {validationErrors.phone && (
                     <p className="text-red-600 mt-2 animate-in slide-in-from-top-2 duration-200" style={{ fontSize: '13px' }}>
                       {validationErrors.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* Age */}
-                <div className="flex-1 sm:max-w-[120px]">
-                  <label htmlFor="age" className="block text-gray-900 font-semibold mb-2" style={{ fontSize: '14px' }}>
-                    Age
-                  </label>
-                  <input
-                    type="number"
-                    id="age"
-                    required
-                    value={contactInfo.age}
-                    onChange={(e) => {
-                      setContactInfo({ ...contactInfo, age: e.target.value });
-                      if (validationErrors.age) {
-                        setValidationErrors({ ...validationErrors, age: undefined });
-                      }
-                    }}
-                    className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${
-                      validationErrors.age || isAgeOutOfRange
-                        ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
-                        : 'border-blue-200/60 focus:border-blue-400/80 focus:ring-4 focus:ring-blue-500/15 hover:border-blue-300/70'
-                    }`}
-                    style={{
-                      height: '48px',
-                      fontSize: '16px',
-                      background: validationErrors.age || isAgeOutOfRange ? '' : 'linear-gradient(135deg, #FEFEFE 0%, #F8FAFC 100%)',
-                      boxShadow: validationErrors.age || isAgeOutOfRange ? '' : '0 1px 3px rgba(59, 130, 246, 0.05), inset 0 1px 2px rgba(0, 0, 0, 0.02)'
-                    }}
-                    placeholder="45"
-                    min="18"
-                    max="120"
-                  />
-                  {validationErrors.age && (
-                    <p className="text-red-600 mt-1 animate-in slide-in-from-top-2 duration-200" style={{ fontSize: '13px' }}>
-                      {validationErrors.age}
-                    </p>
-                  )}
-                  {isAgeOutOfRange && !validationErrors.age && (
-                      <p className="text-red-600 mt-1 animate-in slide-in-from-top-2 duration-200" style={{ fontSize: '13px' }}>
-                      Must be 18-74 years old
                     </p>
                   )}
                 </div>
@@ -541,27 +486,7 @@ export default function PreScreeningForm() {
                 </p>
               </div>
 
-              {/* Consent Checkboxes */}
-              <div className="space-y-3 pt-2">
-                <label className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    required
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span>
-                    I consent to Denali Health Atlanta, LLC contacting me via phone, email, or text message regarding this diabetic wound care program and related services. These messages may include appointment reminders, and notifications for new studies among others. Message frequency may vary. Message &amp; Data rates may apply. Reply STOP to opt-out. I understand I can opt out at any time. Please review our Privacy Policy.
-                  </span>
-                </label>
-                <label className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    required
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span>I agree to the Terms and Conditions.</span>
-                </label>
-              </div>
+              
             </div>
           </div>
         </div>

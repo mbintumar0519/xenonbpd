@@ -268,7 +268,7 @@ export default function ThankYouPage() {
 
         {/* Footer Text */}
         <p className="text-center text-gray-500 text-sm mt-6">
-          Advanced Research Institute • 14540 Cortez Blvd, Brooksville, FL 34613
+          Denali Health Atlanta • 5329 Memorial Drive, Suite A, Stone Mountain, Georgia 30083
         </p>
       </div>
     </div>

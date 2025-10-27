@@ -27,7 +27,7 @@ export default function FAQSection() {
     },
     {
       question: "Who can join?",
-      answer: "Adults 18–74 with bipolar I or II currently in a depressive episode lasting at least 4 weeks."
+      answer: "People with bipolar I or II currently in a depressive episode lasting at least 4 weeks."
     },
     {
       question: "What does participation involve?",

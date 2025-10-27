@@ -185,8 +185,7 @@ export default function NotEligiblePage() {
                 <h3 className="font-semibold text-gray-800 mb-3">Inclusion Criteria:</h3>
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-emerald-600 font-semibold mr-2">✓</span>
-                    <span>Aged <strong>18-80 years old</strong></span>
+                    
                   </li>
                   <li className="flex items-start">
                     <span className="text-emerald-600 font-semibold mr-2">✓</span>
@@ -330,7 +329,7 @@ export default function NotEligiblePage() {
 
         {/* Footer Text */}
         <p className="text-center text-gray-500 text-sm mt-6">
-          Advanced Research Institute • 14540 Cortez Blvd, Brooksville, FL 34613
+          Denali Health Atlanta • 5329 Memorial Drive, Suite A, Stone Mountain, Georgia 30083
         </p>
       </div>
     </div>
