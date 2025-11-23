@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +12,38 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ThankYouPage() {
+  const [crioFormLoaded, setCrioFormLoaded] = useState(false);
+
   useEffect(() => {
     // Scroll to top when page loads
     window.scrollTo(0, 0);
+
+    // Load CRIO CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://app.clinicalresearch.io/css/web-form.css';
+    document.head.appendChild(link);
+
+    // Load CRIO JavaScript
+    const script = document.createElement('script');
+    script.src = 'https://app.clinicalresearch.io/js/web-form.js';
+    script.type = 'text/javascript';
+    script.onload = () => {
+      console.log('CRIO script loaded successfully');
+      setCrioFormLoaded(true);
+      
+      // Fire impression tracking after script loads
+      if (typeof window !== 'undefined' && window.ajax) {
+        window.ajax.get('https://app.clinicalresearch.io/web-form-impression?id=14681');
+        console.log('CRIO impression tracking fired');
+      } else {
+        console.error('CRIO ajax object not available');
+      }
+    };
+    script.onerror = () => {
+      console.error('Failed to load CRIO script');
+    };
+    document.body.appendChild(script);
 
     // Retrieve user data from sessionStorage
     const leadDataStr = sessionStorage.getItem('leadData');
@@ -93,6 +122,12 @@ export default function ThankYouPage() {
     }).catch((error) => {
       console.error("Server-side Lead tracking failed:", error);
     });
+
+    return () => {
+      // Cleanup scripts on unmount
+      if (link.parentNode) link.parentNode.removeChild(link);
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
   }, []);
 
   return (
@@ -176,7 +211,7 @@ export default function ThankYouPage() {
               >
                 <p className="text-lg sm:text-2xl text-gray-700 leading-relaxed">
                   We will contact you in{" "}
-                  <strong className="text-blue-600">1-2 business days</strong>
+                  <strong className="text-blue-600">shortly</strong>
                 </p>
               </motion.div>
 
@@ -244,6 +279,82 @@ export default function ThankYouPage() {
                     Participation is voluntary and free • We never spam or share
                     your number
                   </p>
+                </div>
+              </motion.div>
+
+              {/* Clinical Research IO Form */}
+              <motion.div
+                className="mb-6 sm:mb-8"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
+              >
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 text-center">
+                  Complete Your Information
+                </h3>
+                <div 
+                  id="crio-form" 
+                  className="bg-gray-50 rounded-xl p-4 sm:p-6"
+                >
+                  <form 
+                    action="https://app.clinicalresearch.io/web-form-save" 
+                    method="post"
+                  >
+                    <input type="hidden" name="id" value="14681" />
+                    
+                    <input 
+                      type="text" 
+                      name="first_name" 
+                      defaultValue=""
+                      placeholder="First Name"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors mb-4"
+                    />
+                    
+                    <input 
+                      type="text" 
+                      name="middle_name" 
+                      defaultValue=""
+                      placeholder="Middle Name"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors mb-4"
+                    />
+                    
+                    <input 
+                      type="text" 
+                      name="last_name" 
+                      defaultValue=""
+                      placeholder="Last Name"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors mb-4"
+                    />
+                    
+                    <input 
+                      type="text" 
+                      name="email" 
+                      defaultValue=""
+                      placeholder="Email"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors mb-4"
+                    />
+                    
+                    <input 
+                      type="text" 
+                      name="mobile_phone" 
+                      defaultValue=""
+                      placeholder="Mobile Phone"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors mb-4"
+                    />
+                    
+                    <input 
+                      type="button" 
+                      onClick={(e) => {
+                        if (typeof window !== 'undefined' && window.reloadSectionWithForm) {
+                          window.reloadSectionWithForm('crio-form', e.target.form);
+                        } else {
+                          console.error('CRIO reloadSectionWithForm function not available');
+                        }
+                      }}
+                      value="Submit" 
+                      className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 cursor-pointer hover:scale-[1.02] transform"
+                    />
+                  </form>
                 </div>
               </motion.div>
 
