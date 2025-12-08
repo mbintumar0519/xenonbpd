@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeartbeat, faHome, faPhone, faStethoscope, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { faHeartbeat, faHome, faPhone, faStethoscope } from '@fortawesome/free-solid-svg-icons';
 
 // User-friendly mapping for exclusion reasons
 const EXCLUSION_REASON_MAPPING = {
@@ -156,16 +156,19 @@ export default function NotEligiblePage() {
                   ))}
                 </ul>
                 
-                {/* Safety Net Button */}
+                {/* Contact Team */}
                 <div className="mt-6 text-center">
-                  <Link
-                    href="/schedule"
+                  <p className="text-gray-700 mb-2">
+                    <strong>Still believe you qualify?</strong> Give us a call to discuss your situation:
+                  </p>
+                  <a 
+                    href="tel:+14049992734" 
                     className="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors duration-200"
                     style={{ color: 'white' }}
                   >
-                    <FontAwesomeIcon icon={faCalendarCheck} className="mr-2 text-white" />
-                    Still Believe You Qualify? Schedule a Pre-Screening
-                  </Link>
+                    <FontAwesomeIcon icon={faPhone} className="mr-2 text-white" />
+                    Call +1 (404) 999-2734
+                  </a>
                   <p className="text-sm text-gray-500 mt-2">
                     Discuss your situation with our research team
                   </p>

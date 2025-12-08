@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Script from 'next/script';
+import { useState, useEffect } from 'react';
 
 const questions = [
   {
@@ -56,7 +55,18 @@ export default function PreScreeningForm() {
   });
   const [validationErrors, setValidationErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showBooking, setShowBooking] = useState(false);
+
+  // CRIO Impression Tracking
+  useEffect(() => {
+    try {
+      fetch('https://app.clinicalresearch.io/web-form-impression?id=14681', {
+        method: 'GET',
+        mode: 'no-cors', // CRIO returns an image/pixel, usually safe to fire-and-forget
+      }).catch(err => console.warn('CRIO impression error:', err));
+    } catch (e) {
+      console.warn('CRIO impression error:', e);
+    }
+  }, []);
 
   const handleAnswer = (questionId, answer) => {
     setAnswers({ ...answers, [questionId]: answer });
@@ -103,8 +113,8 @@ export default function PreScreeningForm() {
 
     // Check if any question has a disqualifying "No" answer
     const hasDisqualifyingAnswer = answers.diagnosed_bipolar === 'No' ||
-                                   answers.current_depressive_episode === 'No' ||
-                                   answers.can_travel === 'No';
+      answers.current_depressive_episode === 'No' ||
+      answers.can_travel === 'No';
 
     // Check if age is entered and out of range
     const hasDisqualifyingAge = false;
@@ -283,11 +293,10 @@ export default function PreScreeningForm() {
                         className="sr-only"
                       />
                       <div
-                        className={`w-full text-center rounded-xl font-semibold transition-all duration-300 active:scale-95 sm:hover:scale-105 relative overflow-hidden ${
-                          answers[question.id] === 'Yes'
+                        className={`w-full text-center rounded-xl font-semibold transition-all duration-300 active:scale-95 sm:hover:scale-105 relative overflow-hidden ${answers[question.id] === 'Yes'
                             ? 'bg-gradient-to-r from-teal-500 via-teal-600 to-teal-500 text-white shadow-lg shadow-teal-500/25 border border-teal-400/30'
                             : 'bg-gradient-to-br from-teal-50/80 via-emerald-50/60 to-teal-50/80 text-gray-700 sm:hover:from-teal-100/90 sm:hover:via-emerald-100/80 sm:hover:to-teal-100/90 sm:hover:shadow-md border border-teal-200/60 sm:hover:border-teal-300/70'
-                        }`}
+                          }`}
                         style={{
                           height: '52px',
                           display: 'flex',
@@ -309,11 +318,10 @@ export default function PreScreeningForm() {
                         className="sr-only"
                       />
                       <div
-                        className={`w-full text-center rounded-xl font-semibold transition-all duration-300 active:scale-95 sm:hover:scale-105 relative overflow-hidden ${
-                          answers[question.id] === 'No'
+                        className={`w-full text-center rounded-xl font-semibold transition-all duration-300 active:scale-95 sm:hover:scale-105 relative overflow-hidden ${answers[question.id] === 'No'
                             ? 'bg-gradient-to-r from-teal-500 via-teal-600 to-teal-500 text-white shadow-lg shadow-teal-500/25 border border-teal-400/30'
                             : 'bg-gradient-to-br from-teal-50/80 via-emerald-50/60 to-teal-50/80 text-gray-700 sm:hover:from-teal-100/90 sm:hover:via-emerald-100/80 sm:hover:to-teal-100/90 sm:hover:shadow-md border border-teal-200/60 sm:hover:border-teal-300/70'
-                        }`}
+                          }`}
                         style={{
                           height: '52px',
                           display: 'flex',
@@ -383,11 +391,10 @@ export default function PreScreeningForm() {
                       setValidationErrors({ ...validationErrors, name: undefined });
                     }
                   }}
-                  className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${
-                    validationErrors.name
+                  className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${validationErrors.name
                       ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
                       : 'border-blue-200/60 focus:border-blue-400/80 focus:ring-4 focus:ring-blue-500/15 hover:border-blue-300/70'
-                  }`}
+                    }`}
                   style={{
                     height: '48px',
                     fontSize: '16px',
@@ -420,11 +427,10 @@ export default function PreScreeningForm() {
                         setValidationErrors({ ...validationErrors, phone: undefined });
                       }
                     }}
-                    className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${
-                      validationErrors.phone
+                    className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${validationErrors.phone
                         ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
                         : 'border-blue-200/60 focus:border-blue-400/80 focus:ring-4 focus:ring-blue-500/15 hover:border-blue-300/70'
-                    }`}
+                      }`}
                     style={{
                       height: '48px',
                       fontSize: '16px',
@@ -458,11 +464,10 @@ export default function PreScreeningForm() {
                       setValidationErrors({ ...validationErrors, email: undefined });
                     }
                   }}
-                  className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${
-                    validationErrors.email
+                  className={`w-full px-4 border rounded-xl transition-all duration-300 focus:scale-102 focus:shadow-lg input-field ${validationErrors.email
                       ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
                       : 'border-blue-200/60 focus:border-blue-400/80 focus:ring-4 focus:ring-blue-500/15 hover:border-blue-300/70'
-                  }`}
+                    }`}
                   style={{
                     height: '48px',
                     fontSize: '16px',
@@ -486,7 +491,7 @@ export default function PreScreeningForm() {
                 </p>
               </div>
 
-              
+
             </div>
           </div>
         </div>
@@ -544,32 +549,6 @@ export default function PreScreeningForm() {
           <p className="text-gray-600 text-center mt-3 sm:mt-4 text-xs sm:text-sm">
             We'll call to answer your questions and explain next steps.
           </p>
-
-          {/* Optional: Direct booking alternative */}
-          <div className="text-center mt-6 sm:mt-8">
-            <button
-              type="button"
-              onClick={() => setShowBooking(!showBooking)}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-teal-200 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors text-sm sm:text-base"
-            >
-              {showBooking ? 'Hide Online Booking' : 'Prefer to book directly? Book online'}
-            </button>
-          </div>
-
-          {showBooking && (
-            <div className="mt-4 sm:mt-6">
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 sm:p-4">
-                <iframe
-                  src="https://api.leadconnectorhq.com/widget/booking/oCJUF0iOMFKJBd4fpZS6"
-                  style={{ width: '100%', border: 'none', overflow: 'hidden', minHeight: '780px' }}
-                  scrolling="no"
-                  id="oCJUF0iOMFKJBd4fpZS6_1761332013779"
-                  title="Online Booking"
-                ></iframe>
-                <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
-              </div>
-            </div>
-          )}
         </div>
       </form>
 

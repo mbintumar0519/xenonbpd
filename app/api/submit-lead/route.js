@@ -78,6 +78,36 @@ const CONDITION_NAMES = {
     "Current treatment with biologics/monoclonal antibodies for UC",
 };
 
+const submitToCrio = async ({ firstName, lastName, email, phone }) => {
+  try {
+    const formData = new URLSearchParams();
+    formData.append('id', '14681');
+    formData.append('first_name', firstName);
+    formData.append('last_name', lastName);
+    formData.append('email', email);
+    formData.append('mobile_phone', phone);
+
+    const response = await fetch('https://app.clinicalresearch.io/web-form-save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString(),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`CRIO submission failed: ${response.status} ${text}`);
+    }
+
+    if (isDev) console.log('[CRIO] Lead submitted successfully');
+    return true;
+  } catch (error) {
+    console.error('[CRIO] Error submitting lead:', error);
+    throw error;
+  }
+};
+
 // ---------- handler ----------
 export async function POST(request) {
   try {
@@ -216,6 +246,17 @@ ${answerLines.join("\n") || "- None"}
       status: 'Qualified - XENON BPD Study'
     }, 'BPD Leads').catch(err => {
       console.warn('[Google Sheets] Failed to send lead:', err.message);
+    });
+
+    // --- Send to CRIO (non-blocking) ---
+    // Fire and forget
+    submitToCrio({
+      firstName,
+      lastName,
+      email,
+      phone,
+    }).catch(err => {
+      console.warn('[CRIO] Failed to send lead:', err.message);
     });
 
     if (isDev) {

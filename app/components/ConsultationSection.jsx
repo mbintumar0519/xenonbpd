@@ -58,7 +58,7 @@ export default function ConsultationSection() {
             marginBottom: 'var(--space-4)',
             fontFamily: 'var(--font-heading)'
           }}>
-            Schedule Your <span style={{
+Request Your <span style={{
               position: 'relative',
               display: 'inline-block'
             }}>
@@ -139,7 +139,7 @@ export default function ConsultationSection() {
               fontWeight: '700',
               marginBottom: 'var(--space-4)',
               color: 'var(--gray-900)'
-            }}>Why Schedule Today?</h3>
+            }}>Why Request an Evaluation?</h3>
             
             <div className="benefits-list" style={{
               display: 'flex',

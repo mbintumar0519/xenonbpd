@@ -8,7 +8,6 @@ import {
   faCheckCircle,
   faHome,
   faPhone,
-  faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ThankYouPage() {

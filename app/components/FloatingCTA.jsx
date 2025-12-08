@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { scrollToHeroForm } from '../utils/scrollToForm';
 
 export default function FloatingCTA() {
@@ -32,7 +32,7 @@ export default function FloatingCTA() {
               className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white hover:text-white font-medium px-3 md:px-5 py-2.5 md:py-3 rounded-full shadow-md transition-all duration-300 hover:shadow-lg text-sm md:text-base font-heading"
               style={{ color: 'white' }}
             >
-              <FontAwesomeIcon icon={faCalendarCheck} className="h-4 w-4 md:h-5 md:w-5 opacity-90 text-white" />
+              <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 md:h-5 md:w-5 opacity-90 text-white" />
               <span className="hidden sm:inline text-white">Get Help Today</span>
               <span className="sm:hidden text-white">Get Help</span>
             </button>
