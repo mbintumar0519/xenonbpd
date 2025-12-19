@@ -44,29 +44,36 @@ const DoctorVideoSection = () => {
                   allowFullScreen
                 ></iframe>
               </div>
-              
-              {/* Video Caption */}
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600 italic">
-                  Our PI wants to personally reach out to you so that you are aware of this study.
-                </p>
-              </div>
             </div>
           </div>
 
           {/* Content */}
           <div className="order-2 lg:order-2 text-center">
             <div className="bg-white rounded-xl p-8 shadow-lg">
-              <p className="text-xl text-gray-700 leading-relaxed mb-8">
-                <strong>Schedule your appointment with Dr. Johnson</strong> 
+              <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                <strong>Watch the quick overview video</strong>
               </p>
+
+              <div className="text-left max-w-md mx-auto mb-8">
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                  <li>
+                    <strong>Dosing:</strong> 2 tablets once per week for 6 weeks
+                  </li>
+                  <li>
+                    <strong>Study design:</strong> double-blind with a 50/50 chance of being randomized to Gate251 or placebo
+                  </li>
+                  <li>
+                    <strong>No open-label extension</strong>
+                  </li>
+                </ul>
+              </div>
 
               {/* CTA Button */}
               <button
                 onClick={scrollToQuestionnaire}
                 className="bg-gradient-to-r from-[#0B2A6B] to-[#1E3A8A] hover:from-[#1E3A8A] hover:to-black text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                <span className="text-lg">Get Help Today</span>
+                <span className="text-lg">See if You May Qualify</span>
               </button>
             </div>
           </div>

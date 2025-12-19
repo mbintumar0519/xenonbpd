@@ -19,11 +19,11 @@ export default function FAQSection() {
     },
     {
       question: "What if I’m assigned to placebo?",
-      answer: "Half of participants may receive placebo. Everyone receives exceptional psychiatric care and regular check‑ins. If you complete the study, you may be eligible for an extension where everyone receives active medication."
+      answer: "This study is double‑blind and 50% of participants may receive placebo (randomized 50/50 to Gate251 or placebo). Everyone receives exceptional psychiatric care and regular check‑ins. There is no open‑label extension."
     },
     {
       question: "I can barely leave my house. How can I do this?",
-      answer: "We understand. Transportation is covered with Uber, and we schedule visits at times that work for you. Many people find that the structure and support help during depression."
+      answer: "We understand. Transportation is covered with Uber, and we coordinate visits at times that work for you. Many people find that the structure and support help during depression."
     },
     {
       question: "Who can join?",
@@ -31,7 +31,7 @@ export default function FAQSection() {
     },
     {
       question: "What does participation involve?",
-      answer: "Screening (2–4 weeks) with health checks, then a 6‑week treatment phase taking one capsule daily with dinner, and an 8‑week follow‑up. Uber transportation is included for all visits."
+      answer: "Screening (2–4 weeks) with health checks, then a 6‑week treatment phase taking 2 tablets once per week, and an 8‑week follow‑up. The study is double‑blind with 50/50 randomization to Gate251 or placebo. Uber transportation is included for all visits. There is no open‑label extension."
     },
   ];
 

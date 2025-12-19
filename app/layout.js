@@ -1,7 +1,6 @@
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
-import Ribbon from "./components/Ribbon";
 import Script from 'next/script';
 import Image from 'next/image';
 import { Suspense } from 'react';
@@ -187,7 +186,6 @@ export default function RootLayout({ children }) {
           <FacebookPixel />
         </Suspense>
         <MetaProvider>
-          <Ribbon />
           <Navbar />
           <main id="main" tabIndex="-1">
             {children}

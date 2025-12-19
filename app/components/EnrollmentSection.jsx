@@ -150,7 +150,7 @@ export default function EnrollmentSection() {
                 color: 'var(--gray-600)',
                 lineHeight: '1.6'
               }}>
-                Take one capsule daily with dinner. You’ll have regular visits to see how you’re doing and talk about symptoms. Uber picks you up and brings you home.
+                Take <strong>2 tablets once per week</strong> for 6 weeks. The study is <strong>double‑blind</strong> with a <strong>50/50 chance</strong> of being randomized to <strong>Gate251</strong> or <strong>placebo</strong>. You’ll have regular visits to see how you’re doing and talk about symptoms. Uber picks you up and brings you home.
               </p>
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function EnrollmentSection() {
                 color: 'var(--gray-600)',
                 lineHeight: '1.6'
               }}>
-                We’ll check in to make sure you’re okay, see if improvements continue, and discuss possible longer‑term options. Transportation always included.
+                We’ll check in to make sure you’re okay and see how you’re doing after treatment. Transportation is always included. <strong>There is no open‑label extension.</strong>
               </p>
             </div>
           </div>
@@ -241,12 +241,12 @@ export default function EnrollmentSection() {
                 color: 'var(--gray-900)',
                 marginBottom: 'var(--space-3)',
                 fontWeight: '600'
-              }}>Flexible Scheduling & Support</h3>
+              }}>Support & Transportation</h3>
               <p style={{
                 color: 'var(--gray-600)',
                 lineHeight: '1.6'
               }}>
-                Our team schedules appointments around your needs and provides compassionate support. Many participants find the structure and care helpful during depression.
+                Our team coordinates your study visits and provides compassionate support. Many participants find the structure and care helpful during depression. Free round‑trip Uber is provided for every visit.
               </p>
             </div>
           </div>
