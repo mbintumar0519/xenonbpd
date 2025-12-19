@@ -710,13 +710,30 @@ nav.bg-white .nav-link:hover {
 }
 
 /* Override link styling in footer */
-.footer-link {
+.footer-link,
+footer a {
   color: white !important;
 }
 
-.footer-link:hover {
-  color: var(--primary) !important;
+.footer-link:hover,
+footer a:hover {
+  color: var(--primary-light) !important;
   text-decoration: none !important;
+}
+
+/* Ensure links on dark backgrounds have proper contrast */
+.bg-gray-900 a,
+.bg-gray-800 a,
+[class*="bg-navy"] a,
+[class*="from-navy"] a {
+  color: white !important;
+}
+
+.bg-gray-900 a:hover,
+.bg-gray-800 a:hover,
+[class*="bg-navy"] a:hover,
+[class*="from-navy"] a:hover {
+  color: var(--primary-light) !important;
 }
 
 .PhoneInputInput {
